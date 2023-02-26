@@ -37,7 +37,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "https://defiant-lime-kangaroo.cyclic.app/auth/google/callback",
+      callbackURL: "https://defiant-lime-kangaroo.cyclic.app/google/auth/google/callback",
       scope : ["profile", "email"]
     },
     async function (accessToken, refreshToken, profile, done) {
