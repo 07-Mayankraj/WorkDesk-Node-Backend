@@ -5,7 +5,7 @@ const googlelogin = express.Router();
 const passport = require("passport");
 const { UserModel } = require('../model/user.model');
 const session = require("express-session");
-
+const bcrypt = require("bcrypt");
 // nesseccry middlwars
 
 googlelogin.use(
@@ -52,15 +52,22 @@ passport.use(
         const user = await UserModel.find({ email });
         // console.log(user);
         // if email not present
-        if (user.length === 0) {
-          const newUser = new UserModel({
-            name,
-            email,
-            password: process.env.authKey,
+        let password = process.env.authKey
+        if(user.length === 0){
+          
+          bcrypt.hash(password, 5, async (err, hash) => {
+            if (err) res.status(401).json({ "errow ": err.message });
+            else {
+              const newUser = new UserModel({
+                name,
+                email,
+                password: hash,
+              });
+              await newUser.save();
+            }
           });
-          await newUser.save();
         }
-        // rediection function
+       
       } catch (error) {
         console.log(error.message);
       }
