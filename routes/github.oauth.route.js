@@ -78,7 +78,7 @@ githublogin.get(
   "/auth/github/callback",
   passport.authenticate("github", {
     failureRedirect:
-      "..",
+      "http://127.0.0.1:5500/index.html",
   }),
   function (req, res) {
     // Successful authentication, redirect home.

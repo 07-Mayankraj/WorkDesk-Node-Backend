@@ -82,14 +82,20 @@ googlelogin.get(
   "/auth/google/callback",
   passport.authenticate("google", {
     failureRedirect:
-      "..",
+      "http://127.0.0.1:5500/index.html",
   }),
   function (req, res) {
     // Successful authentication, redirect home.
     // console.log(req.user);
-    res.status(200).json({ GoogleUserData: req.user });
+    // res.redirect("http://127.0.0.1:5500/index.html")
+    // res.status(200).json({ GoogleUserData: req.user });
+    
+    const user = req.user;
+    const encodedUser = encodeURIComponent(JSON.stringify(user));
+    res.redirect(`/dashboard?user=${encodedUser}`);
   }
 );
+
 
 
 module.exports = {
