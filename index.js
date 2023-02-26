@@ -25,7 +25,7 @@ app.get("/", (req, res) => res.send("home_Route"));
 
 // Oauth
 app.use("/", githublogin);
-app.use("/", googlelogin);
+app.use("/google", googlelogin);
 // routers
 app.use("/user", userRouter);
 app.use(authenticate); //  will validate login status
