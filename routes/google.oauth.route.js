@@ -11,7 +11,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:8080/auth/google/callback",
+      callbackURL: "https://defiant-lime-kangaroo.cyclic.app/auth/google/callback",
       scope: ["profile", "email"],
     },
     function (accessToken, refreshToken, profile, cb) {
@@ -45,7 +45,7 @@ googlelogin.get(
        const newUser = new UserModel({
           name,
           email,
-          password: "google-login",
+          password: process.env.authKey,
         });
         await newUser.save();
       }
