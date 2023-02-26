@@ -83,6 +83,7 @@ githublogin.get(
   function (req, res) {
     // Successful authentication, redirect home.
     // console.log(req.user);
+    res.redirect(`http://127.0.0.1:5500/index.html`);
     res.status(200).json({ userData: req.user });
   }
 );
