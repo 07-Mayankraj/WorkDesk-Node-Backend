@@ -7,7 +7,7 @@ const { UserModel } = require('../model/user.model');
 const session = require("express-session");
 const bcrypt = require("bcrypt");
 // nesseccry middlwars
-
+const { sendEmail } = require("../nodemailer/sendingEmails");
 googlelogin.use(
   session({
     secret: process.env.access_key,
@@ -32,6 +32,12 @@ passport.deserializeUser(function (obj, cb) {
 
 //oauth provider
 
+// genrate random number
+function generateOtp() {
+  return Math.floor(Math.random() * 9999);
+}
+
+
 passport.use(
   new GoogleStrategy(
     {
@@ -52,10 +58,10 @@ passport.use(
         const user = await UserModel.find({ email });
         // console.log(user);
         // if email not present
-        let password = process.env.authKey
+        
         if(user.length === 0){
-          
-          bcrypt.hash(password, 5, async (err, hash) => {
+          const credentials = `${name}-`+generateOtp();
+          bcrypt.hash(credentials, 5, async (err, hash) => {
             if (err) res.status(401).json({ "errow ": err.message });
             else {
               const newUser = new UserModel({
@@ -64,6 +70,8 @@ passport.use(
                 password: hash,
               });
               await newUser.save();
+              await sendEmail(email,credentials,name)
+
             }
           });
         }

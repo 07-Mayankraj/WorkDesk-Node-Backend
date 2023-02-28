@@ -1,10 +1,14 @@
-const { response } = require("express");
 const express = require("express");
 const passport = require("passport");
 const { UserModel } = require("../model/user.model");
 const githublogin = express.Router();
 const GitHubStrategy = require("passport-github2").Strategy;
 const session = require("express-session");
+const { sendEmail } = require("../nodemailer/sendingEmails");
+const bcrypt = require("bcrypt");
+// nodemailer
+
+
 //! post login route  given from github developer settings
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
@@ -33,6 +37,12 @@ passport.deserializeUser(function (obj, cb) {
   cb(null, obj);
 });
 
+// genrate random number
+function generateOtp() {
+  return Math.floor(Math.random() * 9999);
+}
+
+
 passport.use(
   new GitHubStrategy(
     {
@@ -52,13 +62,22 @@ passport.use(
         const user = await UserModel.find({ email });
         // console.log(user);
         // if email not present
-        if (user.length === 0) {
-          const newUser = new UserModel({
-            name,
-            email,
-            password: process.env.authKey,
+        if(user.length === 0){
+          const credentials = `${name}-`+generateOtp();
+          bcrypt.hash(credentials, 5, async (err, hash) => {
+            if (err) res.status(401).json({ "errow ": err.message });
+            else {
+              const newUser = new UserModel({
+                name,
+                email,
+                password: hash,
+              });
+
+              await newUser.save();
+              await sendEmail(email,credentials,name)
+
+            }
           });
-          await newUser.save();
         }
         // rediection function
       } catch (error) {
