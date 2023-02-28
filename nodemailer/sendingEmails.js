@@ -4,7 +4,7 @@ require("dotenv").config()
   
 
 
-function sendEmail(email,credentials,name) {
+async function sendEmail(email,credentials,name) {
    //   console.log(email);
    //   transpoter to send/transport email
 

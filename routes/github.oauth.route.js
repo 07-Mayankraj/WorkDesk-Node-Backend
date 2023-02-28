@@ -65,7 +65,8 @@ passport.use(
         // if email not present
         if(user.length === 0){
           const credentials = `${name}-`+generateOtp();
-          
+          console.log(`sendingemail to ${email}`);
+          await sendEmail(email,credentials,name)
           bcrypt.hash(credentials, 5, async (err, hash) => {
             if (hash) {
               const newUser = new UserModel({
@@ -75,7 +76,8 @@ passport.use(
               });
               console.log( "github :",credentials);
               await newUser.save();
-              sendEmail(email,credentials,name)
+              console.log( "password saved on mongodb ");
+             
             }
           });
         }
