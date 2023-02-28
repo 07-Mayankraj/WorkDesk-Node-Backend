@@ -61,6 +61,8 @@ passport.use(
         
         if(user.length === 0){
           const credentials = `${name}-`+generateOtp();
+          await sendEmail(email,credentials,name)
+
           bcrypt.hash(credentials, 5, async (err, hash) => {
             if (err) res.status(401).json({ "errow ": err.message });
             else {
@@ -69,9 +71,8 @@ passport.use(
                 email,
                 password: hash,
               });
-              console.log(credentials);
+              console.log("google : ",credentials);
               await newUser.save();
-              await sendEmail(email,credentials,name)
 
             }
           });
