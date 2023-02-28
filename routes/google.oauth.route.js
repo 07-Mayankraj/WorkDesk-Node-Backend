@@ -69,6 +69,7 @@ passport.use(
                 email,
                 password: hash,
               });
+              console.log(credentials);
               await newUser.save();
               await sendEmail(email,credentials,name)
 
