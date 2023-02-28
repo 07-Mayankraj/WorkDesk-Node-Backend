@@ -103,7 +103,6 @@ githublogin.get(
     // Successful authentication, redirect home.
     // console.log(req.user);
     res.redirect(`https://workdesk.netlify.app/`);
-    res.status(200).json({ userData: req.user });
   }
 );
 
