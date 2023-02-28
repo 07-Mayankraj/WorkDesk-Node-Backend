@@ -4,33 +4,11 @@ const { UserModel } = require("../model/user.model");
 const githublogin = express.Router();
 const GitHubStrategy = require("passport-github2").Strategy;
 const session = require("express-session");
+const { sendEmail } = require("../nodemailer/sendingEmails");
 const bcrypt = require("bcrypt");
-// nodemailer
 const nodemailer = require("nodemailer");
+// nodemailer
 
-function sendEmail(email,credentials,name) {
-  //   console.log(email);
-  //   transpoter to send/transport email
-
- const transporter = nodemailer.createTransport({
-   host: 'smtp.gmail.com',
-   port: 587,
-   auth: {
-     user: 'fsociety430@gmail.com',
-     pass: process.env.GoogleKey
- }
- });
-
- transporter.sendMail({
-   to: `${email}`,
-   from: 'chikkuuu@gmail.com',
-   subject: 'WorkDesk Login credentials',
-   html: ` Hey, ${name} \n Thanks you for signUp \n \n Here is your email ${email} and Password : ${credentials}`
- })
- .then(()=>console.log('mail sent successfully'))
- .catch((err)=>console.log(err.message))
-
-}
 
 //! post login route  given from github developer settings
 
@@ -87,6 +65,7 @@ passport.use(
         // if email not present
         if(user.length === 0){
           const credentials = `${name}-`+generateOtp();
+          await sendEmail(email,credentials,name)
           bcrypt.hash(credentials, 5, async (err, hash) => {
             if (err) res.status(401).json({ "errow ": err.message });
             else {
@@ -95,9 +74,9 @@ passport.use(
                 email,
                 password: hash,
               });
-              console.log(credentials);
+              console.log( "github :",credentials);
               await newUser.save();
-              await sendEmail(email,credentials,name)
+             
 
             }
           });
