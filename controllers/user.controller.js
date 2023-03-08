@@ -100,3 +100,22 @@ exports.getUser = async (req, res) => {
             
         }
     }
+
+
+
+
+
+
+// function he(){
+
+//     bcrypt.compare("password", "$2b$05$Q0lP7ge0mc.WGKInJqYXz.bIvU67MkeG/zmLgXwo6e3nBgtWW3iJu", (err, result) => {
+//         if (result) {
+//             console.log(result);
+//         }
+//         else {
+//             console.log("nhi");
+//         }
+//     })
+// }
+
+// he()
