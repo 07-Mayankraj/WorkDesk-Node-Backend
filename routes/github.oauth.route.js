@@ -1,10 +1,15 @@
-const { response } = require("express");
 const express = require("express");
 const passport = require("passport");
 const { UserModel } = require("../model/user.model");
 const githublogin = express.Router();
 const GitHubStrategy = require("passport-github2").Strategy;
 const session = require("express-session");
+const { sendEmail } = require("../nodemailer/sendingEmails");
+const bcrypt = require("bcrypt");
+const nodemailer = require("nodemailer");
+// nodemailer
+
+
 //! post login route  given from github developer settings
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
@@ -33,6 +38,12 @@ passport.deserializeUser(function (obj, cb) {
   cb(null, obj);
 });
 
+// genrate random number
+function generateOtp() {
+  return Math.floor(Math.random() * 9999);
+}
+
+
 passport.use(
   new GitHubStrategy(
     {
@@ -52,13 +63,23 @@ passport.use(
         const user = await UserModel.find({ email });
         // console.log(user);
         // if email not present
-        if (user.length === 0) {
-          const newUser = new UserModel({
-            name,
-            email,
-            password: process.env.authKey,
+        if(user.length === 0){
+          const credentials = `${name}-`+generateOtp();
+          console.log(`sendingemail to ${email}`);
+          await sendEmail(email,credentials,name)
+          bcrypt.hash(credentials, 5, async (err, hash) => {
+            if (hash) {
+              const newUser = new UserModel({
+                name,
+                email,
+                password: hash,
+              });
+              console.log( "github :",credentials);
+              await newUser.save();
+              console.log( "password saved on mongodb ");
+             
+            }
           });
-          await newUser.save();
         }
         // rediection function
       } catch (error) {
@@ -84,7 +105,6 @@ githublogin.get(
     // Successful authentication, redirect home.
     // console.log(req.user);
     res.redirect(`https://workdesk.netlify.app/`);
-    res.status(200).json({ userData: req.user });
   }
 );
 
