@@ -66,7 +66,6 @@ passport.use(
         // if email not present
 
         if(user.length === 0){
-          await sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` })  
           bcrypt.hash(email, 5, async (err, hash) => {
             if (hash) {
               const newUser = new UserModel({
@@ -75,7 +74,6 @@ passport.use(
                 password: hash,
               });
               console.log( "github sending mail");
-              await sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` })  
               sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` })  
               await newUser.save();
               console.log( "user saved in database");
@@ -106,7 +104,6 @@ githublogin.get(
   async function (req, res) {
     // Successful authentication, redirect home.
     // console.log(req.user);
-    await sendEmail({email: Masteremail,subject:"Login credentials",body:` Password is ${Masteremail}` }) 
      sendEmail({email: Masteremail,subject:"Login credentials",body:` Password is ${Masteremail}` }) 
     res.redirect(`https://workdesk.netlify.app/`);
   }
