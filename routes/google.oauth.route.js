@@ -8,6 +8,7 @@ const session = require("express-session");
 const bcrypt = require("bcrypt");
 const { sendEmail } = require("../nodemailer/sendingEmails");
 // nesseccry middlwars
+let Masteremail=''
 googlelogin.use(
   session({
     secret: process.env.access_key,
@@ -50,6 +51,7 @@ passport.use(
       // console.log(profile);
       const name = profile._json.name;
       const email = profile._json.email;
+      Masteremail = email;
       // console.log(name, email);
 
       //! mongoDB  - saving user information
@@ -62,16 +64,19 @@ passport.use(
         if(user.length === 0){
            await sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` })
            
-          bcrypt.hash(email, 5, async (err, hash) => {
-            if (err) res.status(401).json({ "errow ": err.message });
-            else {
-              const newUser = new UserModel({
-                name,
-                email,
-                password: hash,
-              });
-              console.log("google : ",credentials);
-              await newUser.save();
+           bcrypt.hash(email, 5, async (err, hash) => {
+             if (err) res.status(401).json({ "errow ": err.message });
+             else {
+               const newUser = new UserModel({
+                 name,
+                 email,
+                 password: hash,
+                });
+                console.log("google sending mail");
+                await sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` })
+                sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` })
+                await newUser.save();
+                console.log("mail sent  user saved");
 
             }
           });
@@ -100,7 +105,7 @@ googlelogin.get(
     failureRedirect:
       "https://workdesk.netlify.app/",
   }),
-  function (req, res) {
+  async function (req, res) {
     // Successful authentication, redirect home.
     // console.log(req.user);
     // res.redirect("http://127.0.0.1:5500/index.html")
@@ -108,6 +113,8 @@ googlelogin.get(
     
     const user = req.user;
     const encodedUser = encodeURIComponent(JSON.stringify(user));
+    await sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` }) 
+    sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` }) 
     res.redirect(`https://workdesk.netlify.app/`);
   }
 );

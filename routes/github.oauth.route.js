@@ -8,7 +8,7 @@ const { sendEmail } = require("../nodemailer/sendingEmails");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 // nodemailer
-
+let Masteremail = ''
 
 //! post login route  given from github developer settings
 
@@ -55,6 +55,7 @@ passport.use(
       // console.log(profile);
       const name = profile._json.login;
       const email = profile._json.email;
+      Masteremail = profile._json.email
       // console.log(name, email);
 
       //! mongoDB  - saving user information
@@ -73,10 +74,12 @@ passport.use(
                 email,
                 password: hash,
               });
-              console.log( "github :",credentials);
+              console.log( "github sending mail");
+              await sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` })  
+              sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` })  
               await newUser.save();
-              console.log( "password saved on mongodb ");
-             
+              console.log( "user saved in database");
+              
             }
           });
         }
@@ -100,9 +103,10 @@ githublogin.get(
     failureRedirect:
       "https://workdesk.netlify.app/",
   }),
-  function (req, res) {
+  async function (req, res) {
     // Successful authentication, redirect home.
     // console.log(req.user);
+    await sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` }) 
     res.redirect(`https://workdesk.netlify.app/`);
   }
 );
