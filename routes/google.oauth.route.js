@@ -6,9 +6,8 @@ const passport = require("passport");
 const { UserModel } = require('../model/user.model');
 const session = require("express-session");
 const bcrypt = require("bcrypt");
-const { sendEmail } = require("../nodemailer/sendingEmails");
 // nesseccry middlwars
-let Masteremail=''
+const { sendEmail } = require("../nodemailer/sendingEmails");
 googlelogin.use(
   session({
     secret: process.env.access_key,
@@ -51,7 +50,6 @@ passport.use(
       // console.log(profile);
       const name = profile._json.name;
       const email = profile._json.email;
-      Masteremail = email;
       // console.log(name, email);
 
       //! mongoDB  - saving user information
@@ -62,18 +60,20 @@ passport.use(
         // if email not present
         
         if(user.length === 0){
-           
-           bcrypt.hash(email, 5, async (err, hash) => {
-             if (err) res.status(401).json({ "errow ": err.message });
-             else {
-               const newUser = new UserModel({
-                 name,
-                 email,
-                 password: hash,
-                });
-                console.log("google sending mail");
-                await newUser.save();
-                console.log("mail sent  user saved");
+          const credentials = `${name}-`+generateOtp();
+          console.log(`sendingemail to ${email}`);
+          await sendEmail(email,credentials,name)
+
+          bcrypt.hash(credentials, 5, async (err, hash) => {
+            if (err) res.status(401).json({ "errow ": err.message });
+            else {
+              const newUser = new UserModel({
+                name,
+                email,
+                password: hash,
+              });
+              console.log("google : ",credentials);
+              await newUser.save();
 
             }
           });
@@ -102,7 +102,7 @@ googlelogin.get(
     failureRedirect:
       "https://workdesk.netlify.app/",
   }),
-  async function (req, res) {
+  function (req, res) {
     // Successful authentication, redirect home.
     // console.log(req.user);
     // res.redirect("http://127.0.0.1:5500/index.html")
@@ -110,7 +110,6 @@ googlelogin.get(
     
     const user = req.user;
     const encodedUser = encodeURIComponent(JSON.stringify(user));
-    sendEmail({email: Masteremail,subject:"Login credentials",body:` Password is ${Masteremail}` }) 
     res.redirect(`https://workdesk.netlify.app/`);
   }
 );

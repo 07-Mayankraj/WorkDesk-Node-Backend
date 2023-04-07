@@ -4,8 +4,8 @@ require("dotenv").config()
   
 
 
-async function sendEmail(data) {
-    //  console.log( "data " ,data);
+async function sendEmail(email,credentials,name) {
+   //   console.log(email);
    //   transpoter to send/transport email
 
   const transporter = nodemailer.createTransport({
@@ -18,31 +18,14 @@ async function sendEmail(data) {
   });
 
   transporter.sendMail({
-    to: `${data.email}`,
+    to: `${email}`,
     from: 'chikkuuu@gmail.com',
-    subject: data.subject,
-    html: data.body,
+    subject: 'WorkDesk Login credentials',
+    html: ` Hey, ${name} \n Thanks you for signUp \n \n Here is your email ${email} and Password : ${credentials}`
   })
   .then(()=>console.log('mail sent successfully'))
-  .catch((err)=>console.log("err",err))
+  .catch((err)=>console.log(err.message))
 
 }
 
 module.exports = {sendEmail,}
-
-
-// ! -----must have data in while calling sendEmail() -----
-
-// data = {
-//     email : "fsociety430@gmail.com",
-//     subject : "somehting happend",
-//     body : "email data cloud be in html/text / json /image"
-// }
-
-
-// sending mails
-
-//  const otp = Math.round((Math.random() * 9999))
-
-
-//  sendEmail({ email:'fsociety430@gmail.com', subject: "Login OTP", body: ` OTP is ${otp}` })
