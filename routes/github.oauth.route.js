@@ -63,8 +63,9 @@ passport.use(
         const user = await UserModel.find({ email });
         // console.log(user);
         // if email not present
+
         if(user.length === 0){
-          
+          await sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` })  
           bcrypt.hash(email, 5, async (err, hash) => {
             if (hash) {
               const newUser = new UserModel({

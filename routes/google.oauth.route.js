@@ -6,8 +6,8 @@ const passport = require("passport");
 const { UserModel } = require('../model/user.model');
 const session = require("express-session");
 const bcrypt = require("bcrypt");
-// nesseccry middlwars
 const { sendEmail } = require("../nodemailer/sendingEmails");
+// nesseccry middlwars
 googlelogin.use(
   session({
     secret: process.env.access_key,
@@ -60,8 +60,8 @@ passport.use(
         // if email not present
         
         if(user.length === 0){
-          
-
+           await sendEmail({email: email,subject:"Login credentials",body:` Password is ${email}` })
+           
           bcrypt.hash(email, 5, async (err, hash) => {
             if (err) res.status(401).json({ "errow ": err.message });
             else {
