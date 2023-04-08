@@ -93,7 +93,7 @@ googlelogin.get(
   "/auth/google/callback",
   passport.authenticate("google", {
     failureRedirect:
-      "https://workdesk.netlify.app/",
+      "https://workdesk.netlify.app/routes/loginsignup/login",
   }),
   function (req, res) {
     // Successful authentication, redirect home.
@@ -103,7 +103,7 @@ googlelogin.get(
     
     const user = req.user;
     const encodedUser = encodeURIComponent(JSON.stringify(user));
-    res.redirect(`https://workdesk.netlify.app/`);
+    res.redirect(`https://workdesk.netlify.app/routes/loginsignup/login`);
   }
 );
 

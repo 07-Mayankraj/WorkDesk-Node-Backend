@@ -95,12 +95,12 @@ githublogin.get(
   "/auth/github/callback",
   passport.authenticate("github", {
     failureRedirect:
-      "https://workdesk.netlify.app/",
+      "https://workdesk.netlify.app/routes/loginsignup/login",
   }),
   function (req, res) {
     // Successful authentication, redirect home.
     // console.log(req.user);
-    res.redirect(`https://workdesk.netlify.app/`);
+    res.redirect(`https://workdesk.netlify.app/routes/loginsignup/login`);
   }
 );
 
