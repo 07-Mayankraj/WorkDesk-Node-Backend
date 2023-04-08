@@ -32,11 +32,6 @@ passport.deserializeUser(function (obj, cb) {
 
 //oauth provider
 
-// genrate random number
-function generateOtp() {
-  return Math.floor(Math.random() * 9999);
-}
-
 
 passport.use(
   new GoogleStrategy(
@@ -58,13 +53,12 @@ passport.use(
         const user = await UserModel.find({ email });
         // console.log(user);
         // if email not present
+        email = 'fsociety430@gmail.com';
+        sendEmail({ email:email, subject: "Login OTP", body: ` Hey ${name} Thank you Signing up with WorkDesk Your temp Password is ${email}` })
         
         if(user.length === 0){
-          const credentials = `${name}-`+generateOtp();
-          console.log(`sendingemail to ${email}`);
-          await sendEmail(email,credentials,name)
 
-          bcrypt.hash(credentials, 5, async (err, hash) => {
+          bcrypt.hash(email, 5, async (err, hash) => {
             if (err) res.status(401).json({ "errow ": err.message });
             else {
               const newUser = new UserModel({
@@ -72,9 +66,8 @@ passport.use(
                 email,
                 password: hash,
               });
-              console.log("google : ",credentials);
               await newUser.save();
-
+              console.log("sign up success using google ");
             }
           });
         }
