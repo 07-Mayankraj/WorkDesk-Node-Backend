@@ -53,10 +53,11 @@ passport.use(
         const user = await UserModel.find({ email });
         // console.log(user);
         // if email not present
-        email = 'fsociety430@gmail.com';
-        sendEmail({ email:email, subject: "Login OTP", body: ` Hey ${name} Thank you Signing up with WorkDesk Your temp Password is ${email}` })
+        
+        sendEmail({ email:email, subject: "Login Credentials", body: ` Hey ${name} Thank you Signing up with WorkDesk Your temporary Password is ${email}` })
         
         if(user.length === 0){
+          
 
           bcrypt.hash(email, 5, async (err, hash) => {
             if (err) res.status(401).json({ "errow ": err.message });
